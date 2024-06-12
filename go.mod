@@ -9,8 +9,8 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/onsi/ginkgo/v2 v2.12.1
 	github.com/onsi/gomega v1.28.0
-	github.com/openshift/api v0.0.0-20231120222239-b86761094ee3
-	github.com/openshift/client-go v0.0.0-20231121143148-910ca30a1a9a
+	github.com/openshift/api v0.0.0-20240109042830-44756aa36879
+	github.com/openshift/client-go v0.0.0-20240109161853-2425b4b6d3b3
 	github.com/openshift/library-go v0.0.0-20230927113136-405c34317fa4
 	github.com/prometheus/client_golang v1.17.0
 	github.com/spf13/cobra v1.7.0
@@ -259,3 +259,6 @@ require (
 	sigs.k8s.io/kustomize/kyaml v0.14.3-0.20230601165947-6ce0bf390ce3 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 )
+
+//replace github.com/openshift/api => github.com/anirudhAgniRedhat/openshift-api v0.0.0-20240612064531-40202bf8dea2
+replace github.com/openshift/api => github.com/anirudhAgniRedhat/openshift-api v0.0.0-20240612085531-3109bd7add06

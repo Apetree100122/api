@@ -27,6 +27,8 @@ import (
 	. "github.com/onsi/gomega"
 	machinev1 "github.com/openshift/api/machine/v1beta1"
 	"github.com/openshift/machine-api-operator/pkg/util/conditions"
+	testutils "github.com/openshift/machine-api-operator/pkg/util/testing"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -534,6 +536,10 @@ func TestReconcileRequest(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.request.Name, func(t *testing.T) {
+			gate, err := testutils.NewDefaultMutableFeatureGate()
+			if err != nil {
+				t.Errorf("Case: %s. Unexpected error setting up feature gates: %v", tc.request.Name, err)
+			}
 			act := newTestActuator()
 			act.ExistsValue = tc.existsValue
 			r := &ReconcileMachine{
@@ -551,6 +557,7 @@ func TestReconcileRequest(t *testing.T) {
 				).WithStatusSubresource(&machinev1.Machine{}).Build(),
 				scheme:   scheme.Scheme,
 				actuator: act,
+				gate:     gate,
 			}
 
 			result, err := r.Reconcile(ctx, tc.request)

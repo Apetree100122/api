@@ -27,8 +27,12 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	openshiftfeatures "github.com/openshift/api/features"
 	machinev1resourcebuilder "github.com/openshift/cluster-api-actuator-pkg/testutils/resourcebuilder/machine/v1beta1"
 	"github.com/openshift/cluster-control-plane-machine-set-operator/test/e2e/framework"
+	"github.com/openshift/library-go/pkg/features"
+	"k8s.io/apiserver/pkg/util/feature"
+
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	utilnet "k8s.io/apimachinery/pkg/util/net"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -56,9 +60,17 @@ var _ = Describe("Machine Reconciler", func() {
 		k8sClient = mgr.GetClient()
 		k = komega.New(k8sClient)
 
+		By("Setting up feature gates")
+		defaultMutableGate := feature.DefaultMutableFeatureGate
+		_, err = features.NewFeatureGateOptions(defaultMutableGate, openshiftfeatures.SelfManaged, openshiftfeatures.FeatureGateMachineAPIMigration)
+		Expect(err).NotTo(HaveOccurred())
+
+		err = defaultMutableGate.SetFromMap(map[string]bool{"MachineAPIMigration": true})
+		Expect(err).NotTo(HaveOccurred())
+
 		By("Setting up a new reconciler")
 		act := newTestActuator()
-		reconciler := newReconciler(mgr, act)
+		reconciler := newReconciler(mgr, act, defaultMutableGate)
 
 		Expect(add(mgr, reconciler, "testing")).To(Succeed())
 

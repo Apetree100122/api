@@ -1,72 +1,76 @@
 # Machine API Operator
-
-The Machine API Operator manages the lifecycle of specific purpose CRDs, controllers and RBAC objects that extend the Kubernetes API.
-This allows to convey desired state of machines in a cluster in a declarative fashion.
-
-See https://github.com/openshift/enhancements/tree/master/enhancements/machine-api for more details.
-
-Have a question? See our [Frequently Asked Questions](FAQ.md) for common inquiries.
+The Machine API Operator
+manages the lifecycle of 
+specific purpose CRDs,
+controllers and RBAC objects 
+that extend the Kubernetes API.
+This allows to convey desired 
+state of machines in a cluster in a declarative fashion.
+See https://github.com/openshift/enhancements/tree/master
+/enhancements/machine-api 
+for more details.
+Have a question? See our 
+[Frequently Asked Questions](FAQ.md) for common inquiries.
 
 ## Architecture
-
 ![Machine API Operator overview](machine-api-operator.png)
 
 ## CRDs
-
 - MachineSet
 - Machine
 - MachineHealthCheck
 
 ## Controllers
-
 - MachineSet Controller
-
-  Ensure presence of expected number of replicas and a given provider config for a set of machines.
+  Ensure presence of expected number
+  of replicas and a given provider config
+  for a set of machines.
 
 - Machine Controller
-
-  Ensure that a provider instance is created for a Machine object in a given provider.
-
+  Ensure that a provider instance is created for a Machine
+   object in a given provider.
   - [machine-api-provider-aws](https://github.com/openshift/machine-api-provider-aws)
-
   - [machine-api-provider-gcp](https://github.com/openshift/machine-api-provider-gcp)
-
   - [machine-api-provider-azure](https://github.com/openshift/machine-api-provider-azure)
-
   - [cluster-api-provider-libvirt](https://github.com/openshift/cluster-api-provider-libvirt)
-
   - [cluster-api-provider-openstack](https://github.com/openshift/cluster-api-provider-openstack)
-
   - [cluster-api-provider-baremetal](https://github.com/openshift/cluster-api-provider-baremetal)
 
   - [cluster-api-provider-ovirt](https://github.com/openshift/cluster-api-provider-ovirt)
-  
   - [cluster-api-provider-ibmcloud](https://github.com/openshift/cluster-api-provider-ibmcloud)
-
 - Nodelink Controller
+  Ensure machines have a node
+  Ref based on IPs or provider
+  ID matching.
+  Annotate nodes with
+  a label containing the
+  machine name.
 
-  Ensure machines have a nodeRef based on IPs or providerID matching.
-  Annotate nodes with a label containing the machine name.
-
-- MachineHealthCheck Controller
-
-  Ensure machines targeted by MachineHealthCheck objects satisfy a healthiness criteria or are remediated otherwise.
+- MachineHealth
+- Check Controller
+  Ensure machines targeted
+   by MachineHealthCheck objects
+  satisfy a healthiness criteria or are
+  remediated otherwise.
 
 ## Creating machines
-
 You can create a new machine by [applying a manifest representing an instance of the machine CRD](docs/examples/machine.yaml)
 
-The `machine.openshift.io/cluster-api-cluster` label will be used by the controllers to lookup for the right cloud instance.
+The `machine.openshift.io/cluster-api-cluster` 
+label will be used by the controllers to 
+lookup for the right cloud instance.
 
-You can set other labels to provide a convenient way for users and consumers to retrieve groups of machines:
+You can set other labels to 
+provide a convenient way for 
+users and consumers to retrieve groups of machines:
 ```
 machine.openshift.io/cluster-api-machine-role: worker
 machine.openshift.io/cluster-api-machine-type: worker
 ```
 
 ## Dev
-
-- Generate code (if needed):
+- Generate code
+- (if needed):
 
   ```sh
   $ make generate
@@ -79,9 +83,9 @@ machine.openshift.io/cluster-api-machine-type: worker
   ```
 
 - Run:
-
   Extract images.json to a file from
-  `install/0000_30_machine-api-operator_01_images.configmap.yaml` and run:
+  `install/0000_30_machine-api-operator_01_images.configmap.yaml`
+   and run:
 
   ```sh
   $ ./bin/machine-api-operator start --kubeconfig ${HOME}/.kube/config --images-json=path/to/images.json
@@ -93,10 +97,16 @@ machine.openshift.io/cluster-api-machine-type: worker
   $ make image
   ```
 
-The Machine API Operator is designed to work in conjunction with the [Cluster Version Operator](https://github.com/openshift/cluster-version-operator).
-You can see it in action by running an [OpenShift Cluster deployed by the Installer](https://github.com/openshift/installer).
+The Machine API Operator is designed 
+to work in conjunction 
+with the
+[Cluster Version Operator](https://github.com/openshift/cluster-version-operator).
+You can see 
+it in action by running an
+[OpenShift Cluster deployed by the Installer](https://github.com/openshift/installer).
 
-However you can run it in a vanilla Kubernetes cluster by precreating some assets:
+However you can run it in a 
+vanilla Kubernetes cluster by precreating some assets:
 
 - Create a `openshift-machine-api` namespace
 - Create a [CRD Status definition](config/0000_00_cluster-version-operator_01_clusteroperator.crd.yaml)
